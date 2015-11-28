@@ -139,6 +139,53 @@ def preprocess(x, y):
     target = np.array(y[1:] + [0]).astype('int32') - 1 # same
     return sentence_enc, sentence_dec, target
 
+
+def generate_model(n_hidden=128,n_att=20,attention='no_attention'):
+    INVERT = False
+    DIGITS = 3
+    MAXLEN = DIGITS + 1 + DIGITS
+    n_classes = len('0123456789') + 1 # add <eos>
+    voc_size = len('0123456789+') + 1 # add <bos> for the decoder 
+    # build the model
+    m = model(nh=n_hidden,
+              nc=n_classes, 
+              ne=voc_size, 
+              natt=n_att,
+              attention_type=attention)
+    return m
+    
+
+def train_model(m,nsamples=10000, n_hidden=128, lr=0.01, nepochs=100, val_freq=1):
+    chars = '0123456789+ '
+    ctable = CharacterTable(chars, MAXLEN)
+    X_train, X_val, y_train, y_val = generate_train_data(nsamples) 
+
+    for epoch in range(nepochs):
+        nlls = []
+        for i, (x, y) in enumerate(zip(X_train, y_train)):
+            sentence_enc, sentence_dec, target = preprocess(x, y)
+            nlls += [m.train(sentence_enc, sentence_dec, target, lr)]
+            print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)), end=" ")
+            #print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)))
+            sys.stdout.flush()
+        print
+
+        # evaluation
+        if (epoch + 1) % val_freq == 0: 
+            print ("Epoch %d",epoch)
+            for i, (x, y) in enumerate(zip(X_val, y_val)):
+                sentence_enc, sentence_dec, target = preprocess(x, y)
+                y_pred = m.generate_text(sentence_enc)
+                try:
+                    print ("ground-truth\t", np.concatenate([[sentence_dec[1]], target[:-1]]))
+                    print ("predicted   \t", y_pred)
+                except IndexError:
+                    pass
+                if i > 5:
+                    break
+    
+
+
 def main(nsamples=10000,
          n_hidden=128,
          lr=0.01,

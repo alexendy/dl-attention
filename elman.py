@@ -147,6 +147,7 @@ def main(nsamples=10000,
         print()
         # evaluation
         if (epoch + 1) % val_freq == 0: 
+            print ("Epoch %d",epoch)
             for i, (x, y) in enumerate(zip(X_val, y_val)):
                 sentence_enc, sentence_dec, target = preprocess(x, y)
                 y_pred = m.generate_text(sentence_enc)
