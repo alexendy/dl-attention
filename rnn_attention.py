@@ -156,6 +156,9 @@ def generate_model(n_hidden=128,n_att=20,attention='no_attention'):
     
 
 def train_model(m,nsamples=10000, n_hidden=128, lr=0.01, nepochs=100, val_freq=1):
+    INVERT = False
+    DIGITS = 3
+    MAXLEN = DIGITS + 1 + DIGITS    
     chars = '0123456789+ '
     ctable = CharacterTable(chars, MAXLEN)
     X_train, X_val, y_train, y_val = generate_train_data(nsamples) 
