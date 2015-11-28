@@ -175,11 +175,12 @@ def train_model(m,nsamples=10000, n_hidden=128, lr=0.01, nepochs=100, val_freq=1
 
         # evaluation
         if (epoch + 1) % val_freq == 0: 
-            print ("Epoch %d",epoch)
+            print ("Epoch %d" % epoch)
             for i, (x, y) in enumerate(zip(X_val, y_val)):
                 sentence_enc, sentence_dec, target = preprocess(x, y)
                 y_pred = m.generate_text(sentence_enc)
                 try:
+                    print("Sample : x = '%s'  y = '%s'" % (ctable.decode(x,False),ctable.decode(y,False)))
                     print ("ground-truth\t", np.concatenate([[sentence_dec[1]], target[:-1]]))
                     print ("predicted   \t", y_pred)
                 except IndexError:
