@@ -230,7 +230,7 @@ def main(nsamples=10000,
                 sentence_enc, sentence_dec, target = preprocess(x, y)
                 y_pred = m.generate_text(sentence_enc)
                 try:
-                    print("Sample : x = '%s'  y = '%s'" % (ctable.decode(x,False),(ctable.decode(y,False)))
+                    print("Sample : x = '%s'  y = '%s'" % (ctable.decode(x,False),ctable.decode(y,False)))
                     print ("ground-truth\t", np.concatenate([[sentence_dec[1]], target[:-1]]))
                     print ("predicted   \t", y_pred)
                 except IndexError:
