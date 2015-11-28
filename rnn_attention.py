@@ -133,7 +133,7 @@ class model(object):
         return y_pred
 
 def preprocess(x, y):
-    x, y = filter(lambda z: z != 0, x), filter(lambda z: z != 0, y)
+    x, y = list(filter(lambda z: z != 0, x)), list(filter(lambda z: z != 0, y))
     sentence_enc = np.array(x).astype('int32')
     sentence_dec = np.array([0] + y[:-1]).astype('int32') - 1 # trick with 1-based indexing
     target = np.array(y[1:] + [0]).astype('int32') - 1 # same
@@ -168,18 +168,20 @@ def main(nsamples=10000,
         for i, (x, y) in enumerate(zip(X_train, y_train)):
             sentence_enc, sentence_dec, target = preprocess(x, y)
             nlls += [m.train(sentence_enc, sentence_dec, target, lr)]
-            print "%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)), 
+            #print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)), end=" ")
+            print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)))
             sys.stdout.flush()
         print
 
         # evaluation
         if (epoch + 1) % val_freq == 0: 
+            print ("Epoch %d",epoch)
             for i, (x, y) in enumerate(zip(X_val, y_val)):
                 sentence_enc, sentence_dec, target = preprocess(x, y)
                 y_pred = m.generate_text(sentence_enc)
                 try:
-                    print "ground-truth\t", np.concatenate([[sentence_dec[1]], target[:-1]])
-                    print "predicted   \t", y_pred
+                    print ("ground-truth\t", np.concatenate([[sentence_dec[1]], target[:-1]]))
+                    print ("predicted   \t", y_pred)
                 except IndexError:
                     pass
                 if i > 5:
