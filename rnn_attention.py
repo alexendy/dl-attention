@@ -221,11 +221,11 @@ def main(nsamples=10000,
             #print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)), end=" ")
             print("%.2f %% completedi - nll = %.2f\r" % ((i + 1) * 100. / len(X_train), np.mean(nlls)))
             sys.stdout.flush()
-        print
+        print()
 
         # evaluation
         if (epoch + 1) % val_freq == 0: 
-            print ("Epoch %d",epoch)
+            print ("Epoch %d" %epoch)
             for i, (x, y) in enumerate(zip(X_val, y_val)):
                 sentence_enc, sentence_dec, target = preprocess(x, y)
                 y_pred = m.generate_text(sentence_enc)
